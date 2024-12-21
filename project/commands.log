@@ -1,0 +1,41 @@
+====
+= Criar Controller
+============
+    "php artisan make:controller ExampleController --api"
+    "php artisan make:controller ExampleController --model=Example --api --requests"
+
+====
+= Criar Model e Migrate
+============
+    "php artisan make:model Example -m"
+
+====
+= Criar Request
+============
+    "php artisan make:request ModuleRequest"
+
+====
+= Criar Seed
+============
+    "php artisan make:seeder ExampleSeeder"
+
+====
+= Executar Seed
+============
+    "php artisan db:seed"
+    "php artisan db:seed --class=UserSeeder"
+
+====
+= Criar Migrate For Table
+============
+    "php artisan make:migration create_examples_table"
+
+====
+= Criar Migrate For Column
+============
+    "php artisan make:migration add_profile_id_to_users_table --table=users"
+
+====
+= Reconstruir Banco
+============
+    "php artisan migrate:fresh --seed"

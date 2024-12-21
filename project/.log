@@ -1,0 +1,45 @@
+====
+= Xampp
+============
+
+    • Install (https://www.apachefriends.org/pt_br/index.html)
+    • Faça o download e instale normalmente;
+
+    • Variável de ambiente:
+        • Pesquise por "Configurações avançadas do sistema";
+        • Acesse a aba "Avançado";
+        • Clique em "Variáveis de Ambiente";
+        • Localize em "Variáveis de Ambiente" o "PATH";
+        • Adicione ao "PATH": "C:\xampp\php";
+        • Digite no terminal: "php -v".
+
+====
+= Laravel
+============
+
+    • Acesse "php.ini" do "Xampp" e descomente:
+        > extension=zip
+        > extension=fileinfo
+        > extension=pdo_pgsql
+        > extension=pgsql
+
+    • Criar o projeto (https://laravel.com/docs/11.x)
+        > composer create-project laravel/laravel backend
+
+    • Configurar "Breeze"
+        > composer require laravel/breeze --dev
+        > php artisan breeze:install api
+
+    • Acesse o ".env" e configure as variáveis:
+        > APP_LOCALE="pt-BR"
+        > APP_TIMEZONE="America/Sao_Paulo"
+        > DB_CONNECTION=pgsql
+        > DB_HOST=127.0.0.1
+        > DB_PORT=5432
+        > DB_DATABASE=demons
+        > DB_USERNAME=postgres
+        > DB_PASSWORD=123456
+
+    • Rodar o projeto
+        > php artisan migrate
+        > php artisan serve
