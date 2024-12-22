@@ -4,10 +4,10 @@ namespace App\Models\Rule;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Module extends Model
+class Rule extends Model
 {
     use SoftDeletes, HasFactory;
 
@@ -16,7 +16,7 @@ class Module extends Model
      *
      * @var string
      */
-    protected $table = 'modules';
+    protected $table = 'rules';
 
     /**
      * Indica se o modelo deve ter carimbo de data/hora
@@ -30,24 +30,32 @@ class Module extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['module_id', 'permission_id', 'deleted_at'];
 
     /**
      * Os atributos que não são atribuíveis em massa
      *
      * @var array
      */
-    protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
     /**
-     * Obtém as permissões
+     * Obtém o módulo
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function permissions(): BelongsToMany
+    public function module(): BelongsTo
     {
-        return $this->belongsToMany(Permission::class, 'rules')
-            ->withPivot(['id'])
-            ->wherePivotNull('deleted_at');
+        return $this->belongsTo(Module::class);
+    }
+
+    /**
+     * Obtém a permissão
+     *
+     * @return BelongsTo
+     */
+    public function permission(): BelongsTo
+    {
+        return $this->belongsTo(Permission::class);
     }
 }

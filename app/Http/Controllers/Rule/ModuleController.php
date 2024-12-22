@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Rule\Module\StoreRequest;
 use App\Http\Requests\Rule\Module\UpdateRequest;
 use App\Models\Rule\Module;
+use App\Models\Rule\Rule;
 use App\Traits\DatabaseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -16,6 +17,7 @@ class ModuleController extends Controller
 
     public function __construct(
         protected Module $model,
+        protected Rule $rule,
     ) {}
 
     /**
@@ -26,7 +28,7 @@ class ModuleController extends Controller
     public function all(): JsonResponse
     {
         return response()->json(
-            $this->model->all(),
+            $this->model->with('permissions')->get()
         );
     }
 
@@ -40,7 +42,10 @@ class ModuleController extends Controller
      */
     public function find(Module $module): JsonResponse
     {
-        return response()->json($module);
+        return response()->json([
+             ...$module->toArray(),
+            'permissions' => $module->permissions->toArray(),
+        ]);
     }
 
     /**
@@ -60,6 +65,7 @@ class ModuleController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to save");
             }
 
+            $this->rules($module->id, $request->permission_ids);
             return response()->json($module, 201);
         });
     }
@@ -81,6 +87,7 @@ class ModuleController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to save");
             }
 
+            $this->rules($module->id, $request->permission_ids);
             return response()->noContent();
         });
     }
@@ -101,7 +108,31 @@ class ModuleController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to delete");
             }
 
+            $this->rule->where('module_id', $module->id)->delete();
             return response()->noContent();
         });
+    }
+
+    /**
+     * Salva as regras
+     *
+     * @param int $moduleId
+     * @param array $permissionIds
+     * @return void
+     */
+    public function rules(int $moduleId, array $permissionIds): void
+    {
+        // Exclui as regras relacionadas ao módulo
+        $this->rule->where('module_id', $moduleId)->delete();
+
+        // Cria ou restaura a regra
+        foreach ($permissionIds as $permissionId) {
+            $this->rule->withTrashed()->updateOrCreate([
+                'module_id' => $moduleId,
+                'permission_id' => $permissionId,
+            ], [
+                'deleted_at' => null,
+            ]);
+        }
     }
 }

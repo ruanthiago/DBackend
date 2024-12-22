@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Rule\Permission\StoreRequest;
 use App\Http\Requests\Rule\Permission\UpdateRequest;
 use App\Models\Rule\Permission;
+use App\Models\Rule\Rule;
 use App\Traits\DatabaseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -16,6 +17,7 @@ class PermissionController extends Controller
 
     public function __construct(
         protected Permission $model,
+        protected Rule $rule,
     ) {}
 
     /**
@@ -101,6 +103,7 @@ class PermissionController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to delete");
             }
 
+            $this->rule->where('permission_id', $permission->id)->delete();
             return response()->noContent();
         });
     }

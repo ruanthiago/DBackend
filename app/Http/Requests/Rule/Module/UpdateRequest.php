@@ -29,6 +29,8 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'permission_ids' => 'required|array',
+            'permission_ids.*' => 'exists:permissions,id',
         ];
     }
 }

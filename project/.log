@@ -33,12 +33,7 @@
     • Acesse o ".env" e configure as variáveis:
         > APP_LOCALE="pt-BR"
         > APP_TIMEZONE="America/Sao_Paulo"
-        > DB_CONNECTION=pgsql
-        > DB_HOST=127.0.0.1
-        > DB_PORT=5432
-        > DB_DATABASE=demons
-        > DB_USERNAME=postgres
-        > DB_PASSWORD=123456
+        > DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
 
     • Rodar o projeto
         > php artisan migrate
