@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Rule;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Rule\Module\StoreRequest;
-use App\Http\Requests\Rule\Module\UpdateRequest;
-use App\Models\Rule\Module;
+use App\Http\Requests\Rule\Permission\StoreRequest;
+use App\Http\Requests\Rule\Permission\UpdateRequest;
+use App\Models\Rule\Permission;
 use App\Traits\DatabaseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-class ModuleController extends Controller
+class PermissionController extends Controller
 {
     use DatabaseTrait;
 
     public function __construct(
-        protected Module $model,
+        protected Permission $model,
     ) {}
 
     /**
-     * Retorna todos os módulos
+     * Retorna todas as permissões
      *
      * @return JsonResponse
      */
@@ -31,20 +31,20 @@ class ModuleController extends Controller
     }
 
     /**
-     * Retorna os dados do módulo
+     * Retorna os dados da permissão
      *
-     * @param Module $module
+     * @param Permission $permission
      * @return JsonResponse
      *
      * @throws HTTP_NOT_FOUND
      */
-    public function find(Module $module): JsonResponse
+    public function find(Permission $permission): JsonResponse
     {
-        return response()->json($module);
+        return response()->json($permission);
     }
 
     /**
-     * Cria novo módulo
+     * Cria nova permissão
      *
      * @param StoreRequest $request
      * @return Response
@@ -54,30 +54,30 @@ class ModuleController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         return $this->transaction(function () use ($request) {
-            $module = $this->model->create($request->validated());
+            $permission = $this->model->create($request->validated());
 
-            if (!$module) {
+            if (!$permission) {
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to save");
             }
 
-            return response()->json($module, 201);
+            return response()->json($permission, 201);
         });
     }
 
     /**
-     * Atualiza os dados do módulo
+     * Atualiza os dados da permissão
      *
      * @param UpdateRequest $request
-     * @param Module $module
+     * @param Permission $permission
      * @return Response
      *
      * @throws HTTP_NOT_FOUND
      * @throws HTTP_INTERNAL_SERVER_ERROR
      */
-    public function update(UpdateRequest $request, Module $module): Response
+    public function update(UpdateRequest $request, Permission $permission): Response
     {
-        return $this->transaction(function () use ($request, $module) {
-            if (!$module->update($request->validated())) {
+        return $this->transaction(function () use ($request, $permission) {
+            if (!$permission->update($request->validated())) {
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to save");
             }
 
@@ -86,18 +86,18 @@ class ModuleController extends Controller
     }
 
     /**
-     * Exclui o módulo
+     * Exclui a permissão
      *
-     * @param Module $module
+     * @param Permission $permission
      * @return Response
      *
      * @throws HTTP_NOT_FOUND
      * @throws HTTP_INTERNAL_SERVER_ERROR
      */
-    public function destroy(Module $module): Response
+    public function destroy(Permission $permission): Response
     {
-        return $this->transaction(function () use ($module) {
-            if (!$module->delete()) {
+        return $this->transaction(function () use ($permission) {
+            if (!$permission->delete()) {
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to delete");
             }
 

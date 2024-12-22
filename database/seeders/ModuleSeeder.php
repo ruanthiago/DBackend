@@ -13,5 +13,6 @@ class ModuleSeeder extends Seeder
     public function run(): void
     {
         Module::create(['id' => 1, 'name' => 'Módulos']);
+        Module::create(['id' => 2, 'name' => 'Permissões']);
     }
 }

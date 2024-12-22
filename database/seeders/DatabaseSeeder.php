@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Cria um usuário de desenvolvimento
         User::factory()->create([
             'name' => 'DEV',
             'email' => 'dev@dev.com',
@@ -23,6 +22,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ModuleSeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }
