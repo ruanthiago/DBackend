@@ -33,7 +33,8 @@
             "Tests\\": "tests/"
         },
         "files": [
-            "app/Helpers/AuthHelper.php"
+            "app/Helpers/AuthHelper.php",
+            "app/Helpers/RuleHelper.php"
         ]
     },
     "scripts": {

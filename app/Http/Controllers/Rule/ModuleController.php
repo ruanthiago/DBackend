@@ -28,7 +28,7 @@ class ModuleController extends Controller
     public function all(): JsonResponse
     {
         return response()->json(
-            $this->model->with('permissions')->get()
+            $this->model->all()
         );
     }
 
@@ -52,7 +52,7 @@ class ModuleController extends Controller
      * Cria novo módulo
      *
      * @param StoreRequest $request
-     * @return Response
+     * @return JsonResponse
      *
      * @throws HTTP_INTERNAL_SERVER_ERROR
      */
@@ -65,7 +65,7 @@ class ModuleController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to save");
             }
 
-            $this->rules($module->id, $request->permission_ids);
+            $this->rules($module, $request->permission_ids);
             return response()->json($module, 201);
         });
     }
@@ -87,7 +87,7 @@ class ModuleController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to save");
             }
 
-            $this->rules($module->id, $request->permission_ids);
+            $this->rules($module, $request->permission_ids);
             return response()->noContent();
         });
     }
@@ -108,7 +108,10 @@ class ModuleController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to delete");
             }
 
-            $this->rule->where('module_id', $module->id)->delete();
+            $this->rule->deleteByIds(
+                $module->rules->pluck('id')->toArray()
+            );
+
             return response()->noContent();
         });
     }
@@ -120,19 +123,39 @@ class ModuleController extends Controller
      * @param array $permissionIds
      * @return void
      */
-    public function rules(int $moduleId, array $permissionIds): void
+    public function rules(Module $module, array $permissionIds): void
     {
-        // Exclui as regras relacionadas ao módulo
-        $this->rule->where('module_id', $moduleId)->delete();
+        $this->transaction(function () use ($module, $permissionIds) {
+            $moduleRules = $module->rules;
+            foreach ($permissionIds as $permissionId) {
+                $moduleRule = $moduleRules->where('permission_id', $permissionId)->first();
 
-        // Cria ou restaura a regra
-        foreach ($permissionIds as $permissionId) {
-            $this->rule->withTrashed()->updateOrCreate([
-                'module_id' => $moduleId,
-                'permission_id' => $permissionId,
-            ], [
-                'deleted_at' => null,
-            ]);
-        }
+                if ($moduleRule) { // Remove da lista de regras
+                    $moduleRules = $moduleRules->filter(function ($item) use ($moduleRule) {
+                        return $item->id !== $moduleRule->id;
+                    });
+
+                } else {
+                    $data = [
+                        'module_id' => $module->id,
+                        'permission_id' => $permissionId,
+                    ];
+
+                    // Verifica se a regra está excluída, caso esteja, restaura
+                    if ($rule = $this->rule->withTrashed()->where($data)->first()) {
+                        $rule->restore();
+                    } else {
+                        $this->rule->create($data);
+                    }
+                }
+            }
+
+            // Regras que foram removidas
+            if ($moduleRules->isNotEmpty()) {
+                $this->rule->deleteByIds(
+                    $moduleRules->pluck('id')->toArray()
+                );
+            }
+        });
     }
 }

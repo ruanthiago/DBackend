@@ -2,6 +2,7 @@
 
 namespace App\Models\Rule;
 
+use App\Models\Tenant\TenantRule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,17 +31,17 @@ class Rule extends Model
      *
      * @var array
      */
-    protected $fillable = ['module_id', 'permission_id', 'deleted_at'];
+    protected $fillable = ['module_id', 'permission_id'];
 
     /**
      * Os atributos que não são atribuíveis em massa
      *
      * @var array
      */
-    protected $guarded = ['id', 'created_at', 'updated_at'];
+    protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
-     * Obtém o módulo
+     * Retorna o módulo
      *
      * @return BelongsTo
      */
@@ -50,12 +51,24 @@ class Rule extends Model
     }
 
     /**
-     * Obtém a permissão
+     * Retorna a permissão
      *
      * @return BelongsTo
      */
     public function permission(): BelongsTo
     {
         return $this->belongsTo(Permission::class);
+    }
+
+    /**
+     * Exclui as regras de acordo com os IDs informados
+     *
+     * @param array $ids
+     * @return int
+     */
+    public function deleteByIds(array $ids): int
+    {
+        TenantRule::whereIn('rule_id', $ids)->delete();
+        return $this->whereIn('id', $ids)->delete();
     }
 }

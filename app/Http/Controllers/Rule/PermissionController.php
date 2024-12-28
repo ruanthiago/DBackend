@@ -49,7 +49,7 @@ class PermissionController extends Controller
      * Cria nova permissão
      *
      * @param StoreRequest $request
-     * @return Response
+     * @return JsonResponse
      *
      * @throws HTTP_INTERNAL_SERVER_ERROR
      */
@@ -103,7 +103,10 @@ class PermissionController extends Controller
                 abort(Response::HTTP_INTERNAL_SERVER_ERROR, "Unable to delete");
             }
 
-            $this->rule->where('permission_id', $permission->id)->delete();
+            $this->rule->deleteByIds(
+                $permission->rules->pluck('id')->toArray()
+            );
+
             return response()->noContent();
         });
     }

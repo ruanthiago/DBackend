@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Models\Rule;
+namespace App\Models\Tenant;
 
+use App\Models\Rule\Rule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Permission extends Model
+class TenantRule extends Model
 {
     use SoftDeletes, HasFactory;
 
@@ -17,7 +17,7 @@ class Permission extends Model
      *
      * @var string
      */
-    protected $table = 'permissions';
+    protected $table = 'tenant_rule';
 
     /**
      * Indica se o modelo deve ter carimbo de data/hora
@@ -31,7 +31,7 @@ class Permission extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['tenant_id', 'rule_id'];
 
     /**
      * Os atributos que não são atribuíveis em massa
@@ -41,24 +41,22 @@ class Permission extends Model
     protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
-     * Retorna as regras da permissão
+     * Retorna o inquilino
      *
-     * @return HasMany
+     * @return BelongsTo
      */
-    public function rules(): HasMany
+    public function tenant(): BelongsTo
     {
-        return $this->hasMany(Rule::class);
+        return $this->belongsTo(Tenant::class);
     }
 
     /**
-     * Retorna os módulos da permissão
+     * Retorna a regra
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function modules(): BelongsToMany
+    public function rule(): BelongsTo
     {
-        return $this->belongsToMany(Module::class, 'rules')
-            ->withPivot(['id'])
-            ->wherePivotNull('deleted_at');
+        return $this->belongsTo(Rule::class);
     }
 }

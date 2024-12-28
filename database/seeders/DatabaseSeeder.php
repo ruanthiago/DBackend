@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             PermissionSeeder::class,
             RuleSeeder::class,
+            TenantSeeder::class,
+            TenantRuleSeeder::class,
         ]);
     }
 }
