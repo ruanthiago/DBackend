@@ -29,5 +29,11 @@ class RuleSeeder extends Seeder
         Rule::create(['module_id' => 3, 'permission_id' => 2]);
         Rule::create(['module_id' => 3, 'permission_id' => 3]);
         Rule::create(['module_id' => 3, 'permission_id' => 4]);
+
+        // Perfis
+        Rule::create(['module_id' => 4, 'permission_id' => 1]);
+        Rule::create(['module_id' => 4, 'permission_id' => 2]);
+        Rule::create(['module_id' => 4, 'permission_id' => 3]);
+        Rule::create(['module_id' => 4, 'permission_id' => 4]);
     }
 }

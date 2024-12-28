@@ -42,6 +42,8 @@ class TenantController extends Controller
      */
     public function find(Tenant $tenant): JsonResponse
     {
+        $tenant->load('profiles');
+
         return response()->json([
              ...$tenant->toArray(),
             'modules' => modules($tenant->rules),
@@ -66,7 +68,7 @@ class TenantController extends Controller
             }
 
             $this->rules($tenant, $request->rule_ids);
-            return response()->json($tenant, 201);
+            return response()->json($tenant->getRawOriginal(), 201);
         });
     }
 
@@ -116,11 +118,11 @@ class TenantController extends Controller
     /**
      * Salva as regras
      *
-     * @param int $tenantId
+     * @param Tenant $tenant
      * @param array $ruleIds
      * @return void
      */
-    public function rules(Tenant $tenant, array $ruleIds): void
+    private function rules(Tenant $tenant, array $ruleIds): void
     {
         $this->transaction(function () use ($tenant, $ruleIds) {
             $tenantRules = $tenant->tenantRules;

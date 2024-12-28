@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Models\Rule;
+namespace App\Models\Profile;
 
-use App\Models\Profile\ProfileRule;
-use App\Models\Tenant\TenantRule;
+use App\Models\Rule\Rule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Rule extends Model
+class ProfileRule extends Model
 {
     use SoftDeletes, HasFactory;
 
@@ -18,7 +17,7 @@ class Rule extends Model
      *
      * @var string
      */
-    protected $table = 'rules';
+    protected $table = 'profile_rule';
 
     /**
      * Indica se o modelo deve ter carimbo de data/hora
@@ -32,7 +31,7 @@ class Rule extends Model
      *
      * @var array
      */
-    protected $fillable = ['module_id', 'permission_id'];
+    protected $fillable = ['profile_id', 'rule_id'];
 
     /**
      * Os atributos que não são atribuíveis em massa
@@ -42,35 +41,22 @@ class Rule extends Model
     protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
-     * Retorna o módulo
+     * Retorna o perfil
      *
      * @return BelongsTo
      */
-    public function module(): BelongsTo
+    public function profile(): BelongsTo
     {
-        return $this->belongsTo(Module::class);
+        return $this->belongsTo(Profile::class);
     }
 
     /**
-     * Retorna a permissão
+     * Retorna a regra
      *
      * @return BelongsTo
      */
-    public function permission(): BelongsTo
+    public function rule(): BelongsTo
     {
-        return $this->belongsTo(Permission::class);
-    }
-
-    /**
-     * Exclui as regras de acordo com os IDs informados
-     *
-     * @param array $ids
-     * @return int
-     */
-    public function deleteByIds(array $ids): int
-    {
-        ProfileRule::whereIn('rule_id', $ids)->delete();
-        TenantRule::whereIn('rule_id', $ids)->delete();
-        return $this->whereIn('id', $ids)->delete();
+        return $this->belongsTo(Rule::class);
     }
 }

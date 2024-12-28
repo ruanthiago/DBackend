@@ -42,10 +42,8 @@ class ModuleController extends Controller
      */
     public function find(Module $module): JsonResponse
     {
-        return response()->json([
-             ...$module->toArray(),
-            'permissions' => $module->permissions->toArray(),
-        ]);
+        $module->load('permissions');
+        return response()->json($module->toArray());
     }
 
     /**
@@ -66,7 +64,7 @@ class ModuleController extends Controller
             }
 
             $this->rules($module, $request->permission_ids);
-            return response()->json($module, 201);
+            return response()->json($module->getRawOriginal(), 201);
         });
     }
 

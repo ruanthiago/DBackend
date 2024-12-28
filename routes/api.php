@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Rule\ModuleController;
 use App\Http\Controllers\Rule\PermissionController;
 use App\Http\Controllers\TenantController;
@@ -10,6 +11,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Somente administradores
 Route::middleware(['isAdmin'])->group(function () {
     // Módulos
     Route::controller(ModuleController::class)
@@ -42,5 +44,19 @@ Route::middleware(['isAdmin'])->group(function () {
             Route::get('{tenant}', 'find');
             Route::put('{tenant}', 'update');
             Route::delete('{tenant}', 'destroy');
+        });
+});
+
+// Módulos do inquilino
+Route::prefix('tenants/{tenant}')->group(function () {
+    // Perfis
+    Route::controller(ProfileController::class)
+        ->prefix('profiles')
+        ->group(function () {
+            Route::get('/', 'all');
+            Route::post('/', 'store');
+            Route::get('{profile}', 'find');
+            Route::put('{profile}', 'update');
+            Route::delete('{profile}', 'destroy');
         });
 });

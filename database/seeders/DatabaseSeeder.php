@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             RuleSeeder::class,
             TenantSeeder::class,
             TenantRuleSeeder::class,
+            ProfileSeeder::class,
+            ProfileRuleSeeder::class,
         ]);
     }
 }
